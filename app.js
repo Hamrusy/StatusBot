@@ -13,8 +13,8 @@ const updateChannel = async() => {
 	}
 	else {
 		const body = await res.json()
-		const status = (body.online ? "Онлайн" : "Выключен")
-		if(status == "Онлайн") {
+		const status = (body.online ? "Online" : "Offline")
+		if(status == "Online") {
 			const players = body.players.now
 			const playersMax = body.players.max
 			const playerCount = players + '/' + playersMax;
@@ -25,10 +25,7 @@ const updateChannel = async() => {
 				},
 				status: 'online'
 			}).catch(console.error);
-			if(config.pinUpdate) {
-				updatePin(body)
-			}
-		} else if(status == "Выключен") {
+		} else if(status == "Offline") {
 			client.user.setPresence({
 				activity: {
 					name: 'Hi-Tech | Выключен'
@@ -58,56 +55,30 @@ client.on('message', async(message) => {
 		let args = message.content.replace(config.prefix, "").split(" ");
 		let command = args.shift();
 		// Команды
-		if(command === 'status' || command === "stat") {
-			let saddress = args[0] || config.serverAddress;
-			let sport = args[1] || config.serverPort;
-			const res = await fetch(`https://mcapi.us/server/status?ip=${saddress}&port=${sport ? `${sport}` : ''}`)
-			if(!res) {
-				message.delete().catch()
-				const sentMessage = await message.channel.send(`Похоже mcapi.us недоступен!`).then(r => r.delete({
-					timeout: 3000
-				}));
-			} else {
-				const body = await res.json()
-				if(body.status == "success") {
-					const attachment = new Discord.MessageAttachment(Buffer.from(body.favicon.substr('data:image/png;base64,'.length), 'base64'), "icon.png")
-					var playerSample = (config.showPlayerSample ? body.players.sample : "");
-					var playersNow = ""
-					if(playerSample != null) {
-						for(var i = 0; i < playerSample.length; i++) {
-							var obj = playerSample[i];
-							playersNow += obj['name'] + ", ";
+		if(command === "online" || command === "on") {
+					let saddress = args[0] || config.serverAddress;
+					let sport = args[1] || config.serverPort;
+					const res = await fetch(`https://mcapi.us/server/status?ip=${saddress}&port=${sport ? `${sport}` : ''}`)
+					if(!res) return message.channel.send(`Похоже mcapi.us не доступен!`)
+					const body = await res.json()
+					if(body.status == "success") {
+						var playerSample = (config.showPlayerSample ? body.players.sample : "");
+						var playersNow = ""
+						if(playerSample != null) {
+							for(var i = 0; i < playerSample.length; i++) {
+								var obj = playerSample[i];
+								playersNow += obj['name'] + ", ";
+							}
 						}
+						playersNow = playersNow.replace(/,\s*$/, "")
+						message.channel.send(`Онлайн: ${body.players.now}/${body.players.max}` + ` Игроки: **${playersNow}**`);
+					} else {
+						message.delete().catch()
+						message.channel.send(`Похоже сревер не доступен!`).then(r => r.delete({
+							timeout: 3000
+						}));
 					}
-					playersNow = playersNow.replace(/,\s*$/, "")
-					const cleanMotD = body.motd.replace(/§[0-9,a-z]/g,"");
-					const embed = new Discord.MessageEmbed().setAuthor(`${saddress}:${sport}`).attachFiles(attachment).setThumbnail("attachment://icon.png").addFields({
-						name: 'Motd',
-						value: `${body.motd ? `${cleanMotD}` : '\u200b'}`
-					}, {
-						name: 'Version',
-						value: `${body.server.name ? `${body.server.name}` : '\u200b'}`,
-						inline: true
-					}, {
-						name: 'Status',
-						value: `${(body.online ? "Online" : "Offline")}`,
-						inline: true
-					}, {
-						name: 'Players',
-						value: `${body.players.now}/${body.players.max} ${(body.players.sample == null?'':playersNow)}`
-					}, ).setColor("#5b8731").setFooter(`Minecraft Server Status Bot for Discord`)
-					message.channel.send(`Status for **${saddress}:${sport}**:`, {
-						embed
-					})
-				} else {
-					message.delete().catch()
-					const errorm = body.error;
-					message.channel.send(`Похоже сервер недоступен!`).then(r => r.delete({
-						timeout: 3000
-					}));
 				}
-			}
-		}
 	}
 })
 client.login(config.token)
