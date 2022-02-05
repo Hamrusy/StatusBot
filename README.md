@@ -2,7 +2,7 @@
 
 ## Требования
 - NodeJS
-- [Токен бота](https://discord.com/developers/applications/)
+- [Токен дискорд бота](https://discord.com/developers/applications/)
 
 ## Установка
 - Скачайте файлы с этой репозитории и загрузите на хостинг
