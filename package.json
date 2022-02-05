@@ -1,0 +1,26 @@
+{
+  "name": "ServerStatusBot",
+  "description": "Бот показывающий онлайн сервера майнкрафт",
+  "version": "1.0.0",
+  "dependencies": {
+    "discord.js": "^13.6.0",
+    "ms": "2.1.2",
+    "node-fetch": "^3.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hamrusy/StatusBot.git"
+  },
+  "keywords": [
+    "nodejs",
+    "minecraft",
+    "discord",
+    "discord-bot"
+  ],
+  "author": "Hamrusy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hamrusy/StatusBot/issues"
+  },
+  "homepage": "https://github.com/Hamrusy/StatusBot"
+}

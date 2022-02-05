@@ -1,0 +1,10 @@
+{
+  "token": "token",
+  "prefix": "h!",
+  "serverAddress": "serverIp",
+  "serverPort": "serverPort",
+  "serverName": "Hi-Tech",
+  "updateInterval": "1min",
+  "showPlayerSample": true,
+  "pinUpdate": true
+}
